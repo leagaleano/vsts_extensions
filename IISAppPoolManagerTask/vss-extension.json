@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "iis-app-pool-manager",
     "name": "IIS Application Pool Manager",
-    "version": "1.0.9",
+    "version": "1.0.10",
     "publisher": "LeandroGaleano",
     "public": true,
     "targets": [

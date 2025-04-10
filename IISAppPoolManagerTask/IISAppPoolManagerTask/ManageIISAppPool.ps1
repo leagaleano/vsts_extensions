@@ -29,35 +29,43 @@ try {
         # Import the WebAdministration module
         Import-Module WebAdministration -ErrorAction Stop
         
+		# Validate if Web Application Pool exists
+		$pool = Get-Item "IIS:\AppPools\$iisPoolName" -ErrorAction SilentlyContinue
+		if (-not $pool) {throw "$iisPoolName Web Application Pool not found on server $serverName"}
+		
         # Execute action based on parameter
         switch ($action) {
             "Start" {
                 Write-Output "Starting Web Application Pool '$iisPoolName'..."
-                Start-WebAppPool -Name $iisPoolName -ErrorAction Stop
-                Write-Output "Web Application Pool '$iisPoolName' started successfully."
+                Start-WebAppPool -Name $iisPoolName -ErrorAction Continue
+				Start-Sleep 1
+				$pool = Get-Item "IIS:\AppPools\$iisPoolName" -ErrorAction SilentlyContinue
+                Write-Output "Web Application Pool '$iisPoolName' status is: $pool.State"
             }
             "Recycle" {
                 Write-Output "Recycling Web Application Pool '$iisPoolName'..."
-                Restart-WebAppPool -Name $iisPoolName -ErrorAction Stop
-                Write-Output "Web Application Pool '$iisPoolName' recycled successfully."
+                Restart-WebAppPool -Name $iisPoolName -ErrorAction Continue
+				Start-Sleep 1
+				$pool = Get-Item "IIS:\AppPools\$iisPoolName" -ErrorAction SilentlyContinue
+                Write-Output "Web Application Pool '$iisPoolName' status is: $pool.State"
             }
             "Stop" {
                 Write-Output "Stopping Web Application Pool '$iisPoolName'..."
-                Stop-WebAppPool -Name $iisPoolName -ErrorAction Stop
-                Write-Output "Web Application Pool '$iisPoolName' stopped successfully."
+                Stop-WebAppPool -Name $iisPoolName -ErrorAction Continue
+				Start-Sleep 1
+				$pool = Get-Item "IIS:\AppPools\$iisPoolName" -ErrorAction SilentlyContinue
+                Write-Output "Web Application Pool '$iisPoolName' status is: $pool.State"
             }
             "ForceStop" {
                 Write-Output "Force stopping Web Application Pool '$iisPoolName'..."
                 $pool = Get-Item "IIS:\AppPools\$iisPoolName" -ErrorAction SilentlyContinue
-                if ($pool -and $pool.State -eq 'Started') {
-                    Stop-WebAppPool -Name $iisPoolName -ErrorAction Stop
-                    Write-Output "Web Application Pool '$iisPoolName' stopped successfully."
+                if ($pool.State -eq 'Started') {
+                    Stop-WebAppPool -Name $iisPoolName -ErrorAction Continue
+                    Write-Output "Web Application Pool '$iisPoolName' stop signal sent"
                 } else {
-                    Write-Output "Web Application Pool '$iisPoolName' is already stopped or does not exist."
+                    Write-Output "Web Application Pool '$iisPoolName' is already stopped"
                 }
-                
                 Start-Sleep 3
-                
                 $w3wpProcesses = Get-WmiObject Win32_Process | Where-Object { $_.Name -eq "w3wp.exe" -and $_.CommandLine -match "$iisPoolName" }
                 if (-not [string]::IsNullOrWhiteSpace($w3wpProcesses)) {
                     foreach ($process in $w3wpProcesses) {
@@ -68,6 +76,8 @@ try {
                 } else {
                     Write-Output "No remaining w3wp processes found for '$iisPoolName'."
                 }
+				$pool = Get-Item "IIS:\AppPools\$iisPoolName" -ErrorAction SilentlyContinue
+                Write-Output "Web Application Pool '$iisPoolName' status is: $pool.State"
             }
             default {
                 throw "Invalid action: $action. Valid options are Start, Stop, Recycle, and ForceStop."

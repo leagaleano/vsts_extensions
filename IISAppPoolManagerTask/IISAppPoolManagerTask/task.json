@@ -5,11 +5,11 @@
     "description": "Start, stop, recycle, or force stop IIS application pools remotely",
     "helpMarkDown": "More Information",
     "category": "Utility",
-    "author": "Your Name",
+    "author": "Leandro Galeano",
     "version": {
         "Major": 1,
         "Minor": 0,
-        "Patch": 9
+        "Patch": 10
     },
     "instanceNameFormat": "Manage IIS App Pool: $(action) $(iisPoolName)",
     "groups": [
