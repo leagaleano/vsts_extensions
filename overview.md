@@ -103,6 +103,11 @@ steps:
     action: 'Recycle'
 ```
 
+## Help needed
+
+I should use "inputs:" instead of "env:", but I'have no idea how :( Feel free to create a PR https://github.com/leagaleano/vsts_extensions with any suggestion on how to achieve this :)
+Don't worry, I'll bump major version when this is fixed, so your pipelines won't be disrupted
+
 ## Troubleshooting
 
 - Ensure the target server is accessible from your Azure DevOps agent
