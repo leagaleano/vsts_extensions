@@ -1,0 +1,55 @@
+{
+    "manifestVersion": 1,
+    "id": "iis-app-pool-manager",
+    "name": "IIS Application Pool Manager",
+    "version": "1.0.8",
+    "publisher": "LeandroGaleano",
+    "public": true,
+    "targets": [
+        {
+            "id": "Microsoft.VisualStudio.Services"
+        }
+    ],
+    "description": "Azure DevOps Extension to manage IIS Application Pools remotely",
+    "categories": [
+        "Azure Pipelines"
+    ],
+    "icons": {
+        "default": "images/extension-icon.png"
+    },
+    "files": [
+        {
+            "path": "IISAppPoolManagerTask"
+        },
+        {
+            "path": "images",
+            "addressable": true
+        },
+        {
+            "path": "overview.md",
+            "addressable": true
+        }
+    ],
+    "content": {
+        "details": {
+            "path": "overview.md"
+        }
+    },
+    "contributions": [
+        {
+            "id": "iis-app-pool-manager-task",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "IISAppPoolManagerTask",
+		"execution": {
+                    "PowerShell3": {
+                        "target": "IISAppPoolManagerTask/ManageIISAppPool.ps1"
+                    }
+                }
+            }
+        }
+    ]
+}
